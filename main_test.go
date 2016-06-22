@@ -1,38 +1,95 @@
 package main
 
-import (
-	"fmt"
-	"testing"
-)
+import "testing"
 
-/*
 func TestConstructor(t *testing.T) {
-	m := NewMatrixMapFloat64(1000000, 1000000)
+	t.Parallel()
+
+	m := NewMatrixMapFloat64(5000000, 1000000)
+	if m.R != 5000000 || m.C != 1000000 {
+		t.Error("Get failed to return the correct values")
+	}
 }
-*/
 
 func TestGet(t *testing.T) {
+	t.Parallel()
+
 	m := NewMatrixMapFloat64(1000000, 1000000)
 	m.Set(10000, 50000, 5.0)
 	r1, _ := m.Get(10000, 50000)
 	r2, _ := m.Get(10001, 50000)
-	fmt.Println(r1)
-	fmt.Println(r2)
+
+	if r1 != 5.0 || r2 != 0 {
+		t.Error("Get failed to return the correct values")
+	}
+}
+
+func TestConstAdd(t *testing.T) {
+	t.Parallel()
+
+	m := NewMatrixMapFloat64(1000000, 1000000)
+	m2 := NewMatrixMapFloat64(1000000, 1000000)
+
+	m.Set(10000, 50000, 5.0)
+	m.Set(10000, 50001, 12.0)
+	m.Set(10001, 50000, 14.0)
+
+	m2.Set(10000, 50000, 2.0)
+	m2.Set(20000, 30000, 4.0)
+
+	m.Add(m2)
+
+	r1, _ := m.Get(10000, 50000)
+	r2, _ := m.Get(10000, 50001)
+	r3, _ := m.Get(10001, 50000)
+	r4, _ := m.Get(20000, 30000)
+
+	if r1 != 7.0 || r2 != 12.0 || r3 != 14.0 || r4 != 4.0 {
+		t.Error("Incorrect matrix addition")
+	}
 }
 
 func TestConstMultplier(t *testing.T) {
+	t.Parallel()
+
 	m := NewMatrixMapFloat64(1000000, 1000000)
 	m.Set(10000, 50000, 5.0)
 	m.MultiplyConstant(3.0)
 	r, _ := m.Get(10000, 50000)
-	fmt.Println(r)
+
+	if r != 15.0 {
+		t.Error("Incorrect multiplication by const")
+	}
 }
 
-func TestMultplier(t *testing.T) {
+func TestMultplierValues(t *testing.T) {
+	t.Parallel()
+
 	m := NewMatrixMapFloat64(1000000, 1000000)
 	m2 := NewMatrixMapFloat64(1000000, 1000000)
-	m.Set(10000, 50000, 5.0)
+
+	m.Set(10, 50000, 5.0)
+	m.Set(10000, 50000, 7.0)
 	m2.Set(50000, 30000, 2.0)
 	m.Multiply(m2)
-	fmt.Println(m)
+
+	r1, _ := m.Get(10, 50000)
+	r2, _ := m.Get(10000, 50000)
+
+	if r1 != 10.0 || r2 != 14.0 {
+		t.Error("Incorrect multiplication of matricies")
+	}
+}
+
+func TestMultplierDimension(t *testing.T) {
+	t.Parallel()
+
+	m := NewMatrixMapFloat64(3, 1000000)
+	m2 := NewMatrixMapFloat64(1000000, 500)
+
+	m.Multiply(m2)
+
+	if m.R != 3 || m.C != 500 {
+		t.Error("Incorrect matrix dimensions")
+	}
 }
