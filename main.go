@@ -22,7 +22,7 @@ func NewMatrixMapFloat64(rn, cn int) *MatrixMapFloat64 {
 }
 
 func (m *MatrixMapFloat64) Get(r, c int) (float64, error) {
-	if r < 0 || r > m.R || c < 0 || c > m.C {
+	if r < 1 || r > m.R || c < 1 || c > m.C {
 		return 0, errors.New("row or col out of bounds")
 	}
 
@@ -33,7 +33,7 @@ func (m *MatrixMapFloat64) Get(r, c int) (float64, error) {
 }
 
 func (m *MatrixMapFloat64) Set(r, c int, v float64) error {
-	if r < 0 || r > m.R || c < 0 || c > m.C {
+	if r < 1 || r > m.R || c < 1 || c > m.C {
 		return errors.New("row or col out of bounds")
 	}
 
@@ -43,7 +43,7 @@ func (m *MatrixMapFloat64) Set(r, c int, v float64) error {
 
 func (m *MatrixMapFloat64) Add(m2 *MatrixMapFloat64) error {
 	if m.R != m2.R || m.C != m2.C {
-		return errors.New("m dimensions must match m2 dimensions")
+		return errors.New("m1 dimensions must match m2 dimensions")
 	}
 
 	for k, v := range m2.matrix {
@@ -82,4 +82,17 @@ func (m *MatrixMapFloat64) Multiply(m2 *MatrixMapFloat64) error {
 
 	m.C = m2.C
 	return nil
+}
+
+func (m *MatrixMapFloat64) Transpose() {
+	// TODO: Implement in-place transpose if possible
+	new_matrix := make(map[Key]float64)
+	for k, v := range m.matrix {
+		new_matrix[Key{k.Col, k.Row}] = v
+	}
+
+	temp := m.R
+	m.R = m.C
+	m.C = temp
+	m.matrix = new_matrix
 }

@@ -93,3 +93,29 @@ func TestMultplierDimension(t *testing.T) {
 		t.Error("Incorrect matrix dimensions")
 	}
 }
+
+func TestTranspose(t *testing.T) {
+	t.Parallel()
+
+	m := NewMatrixMapFloat64(4, 2)
+
+	m.Set(1, 1, 1.0)
+	m.Set(1, 2, 2.0)
+	m.Set(2, 1, 3.0)
+	m.Set(2, 2, 4.0)
+	m.Set(3, 1, 5.0)
+	m.Set(3, 2, 6.0)
+	m.Set(4, 1, 7.0)
+	m.Set(4, 2, 8.0)
+
+	m.Transpose()
+
+	r1, _ := m.Get(1, 1)
+	r2, _ := m.Get(1, 2)
+	r3, _ := m.Get(1, 3)
+	r4, _ := m.Get(1, 4)
+
+	if r1 != 1.0 || r2 != 3.0 || r3 != 5.0 || r4 != 7.0 {
+		t.Error("Matrix transpose failed")
+	}
+}
